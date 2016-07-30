@@ -1,0 +1,9 @@
+<ul>
+  {{#each posts as |post|}}
+    <li>{{post.title}}</li>
+  {{/each}}
+</ul>
+<hr>
+{{input value=newPost.title}}
+{{textarea value=newPost.content}}
+<button {{action "createPost"}}>Create</button>
