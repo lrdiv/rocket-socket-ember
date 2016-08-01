@@ -11,14 +11,14 @@ export default Ember.Component.extend({
     this.socket.on('post:create', (res) => {
       console.log(res);
       this.get('posts').addObject(res);
-    })
-  },
-
-  onConnect() {
-    console.log("Conect")
+    });
     this.socket.emit('posts:list', (posts) => {
       this.set('posts', posts)
     });
+  },
+
+  onConnect() {
+
   },
 
   actions: {
