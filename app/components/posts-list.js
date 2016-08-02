@@ -1,32 +1,32 @@
-import Ember from 'ember'
+import Ember from 'ember';
 
 export default Ember.Component.extend({
-  socketService: Ember.inject.service('socket-io'),
+  store: Ember.inject.service(),
 
-  newPost: new Ember.Object(),
   init() {
     this._super(...arguments);
-    this.socket = this.get('socketService').socketFor('ws://localhost:3000/');
-    this.socket.on('connect', this.onConnect, this);
-    this.socket.on('post:create', (res) => {
-      console.log(res);
-      this.get('posts').addObject(res);
-    });
-    this.socket.emit('posts:list', (posts) => {
-      this.set('posts', posts)
-    });
+    let newPost = this.get('store').createRecord('post');
+    this.set('newPost', newPost);
   },
 
-  onConnect() {
-
-  },
+  visiblePosts: Ember.computed.filter('posts', (post) => {
+    return !post.get('isNew');
+  }),
 
   actions: {
     createPost() {
-      this.socket.emit('posts:create', this.get('newPost'), () => {
-        this.set('newPost', new Ember.Object())
-      })
+      let post = this.get('newPost');
+      post.save().then(() => {
+        let newPost = this.get('store').createRecord('post');
+        this.set('newPost', newPost);
+      }, (error) => {
+        console.log("Error happened...");
+        console.log(error);
+      });
+      // this.socket.emit('posts:create', this.get('newPost'), () => {
+      //   this.set('newPost', new Ember.Object())
+      // })
     }
   }
 
-})
+});
